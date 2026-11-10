@@ -26,11 +26,23 @@ else{ev.runs=bn;m.runs+=bn;s.runs+=bn;bs.conceded+=bn;c[m.batter].runs+=bn;if(bn
 m.hist.push(ev);
 const done=(m.part===2&&m.runs>=m.target)||m.balls>=m.maxBalls||m.wk>=m.order.length;
 if(done)finish(m);else if(m.balls%6===0)m.bowler=null;return ev}
+
+function dotBall(m,seq){
+if(m.status!=="play")fail("Match not in play");if(seq!==m.seq)fail("Duplicate or out-of-order ball");if(m.bowler===null)fail("Choose a bowler first");
+const s=m.stats[m.batter],bs=m.stats[m.bowler],c=m.career;
+c[m.batter]=c[m.batter]||{runs:0,wkts:0};c[m.bowler]=c[m.bowler]||{runs:0,wkts:0};
+m.seq++;m.balls++;s.faced++;bs.bowled++;
+const ev={n:m.balls,bat:null,bowl:null,batter:m.batter,bowler:m.bowler,runs:0,type:"dot",reason:"batter-timeout"};
+m.hist.push(ev);
+const done=(m.part===2&&m.runs>=m.target)||m.balls>=m.maxBalls||m.wk>=m.order.length;
+if(done)finish(m);else if(m.balls%6===0)m.bowler=null;
+return ev}
+
 function finish(m){m.bowler=null;if(m.part===1){m.firstRuns=m.runs;m.firstBat=m.bat;m.target=m.runs+1;m.status="innings_break"}
 else{m.secondRuns=m.runs;if(m.runs>=m.target)win(m,m.bat);else if(m.runs===m.target-1)m.status="tie";else win(m,m.firstBat)}}
 function win(m,w){m.winner=w;m.status="done";m.results.push({so:m.so,first:m.firstRuns,second:m.secondRuns})}
 function awards(m){const all=m.teams.flatMap(t=>t.players),c=id=>m.career[id]||{runs:0,wkts:0},mx=f=>all.reduce((a,b)=>f(b)>f(a)?b:a);
 const team=p=>m.teams.findIndex(t=>t.players.includes(p));return{topScorer:mx(p=>c(p.id).runs),topWicketTaker:mx(p=>c(p.id).wkts),potm:mx(p=>c(p.id).runs+15*c(p.id).wkts+(team(p)===m.winner?10:0)),c}}
-root.HandXIEngine={create,startInnings,chooseBowler,eligibleBowlers,legal,play,awards,validateTeam,LIVES,SIXES,P};
+root.HandXIEngine={create,startInnings,chooseBowler,eligibleBowlers,legal,play,dotBall,awards,validateTeam,LIVES,SIXES,P};
 if(typeof module!=="undefined")module.exports=root.HandXIEngine;
 })(typeof window!=="undefined"?window:globalThis);

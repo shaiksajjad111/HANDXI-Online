@@ -49,3 +49,15 @@ You can also create a Render **Web Service** manually with:
 - `Room not found`: check the 5-character code and create a new room if the server restarted.
 - `This room already has two players`: create a new room; rooms support exactly two participants.
 - If the first Render request is slow, wait for the service to wake and refresh once.
+
+
+## V9 update — Friends Match polish and 7-second turn clock
+
+- Friends Match now uses the same premium player-card visual language as the Play vs Computer collection screen.
+- Both players get a server-authoritative 7-second window for each ball.
+- If the batter does not lock a number before the deadline, the delivery is recorded as a dot ball.
+- If the bowler does not lock a number but the batter has selected, the batter's selected number is scored.
+- If neither player locks in time, it is a dot ball.
+- The server resolves each ball once and rejects late/duplicate selections. The countdown shown in the browser is display-only; the server deadline is authoritative.
+
+Deploy by replacing the repository contents with this ZIP's `HANDXI` folder contents, then commit and push to the `main` branch. Render will redeploy automatically.
